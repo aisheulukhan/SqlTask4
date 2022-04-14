@@ -143,10 +143,6 @@ CREATE TABLE InsertTickets(
 
 
 
-
-
-
-
 CREATE PROCEDURE usp_BuyTicket
   (@HallId  INTEGER,
    @SessionsId INTEGER,
@@ -154,48 +150,44 @@ CREATE PROCEDURE usp_BuyTicket
    @CustomerId INTEGER
    
    )
-AS
-BEGIN
-   INSERT INTO InsertTickets (HallId, SessionsId FilmId,CustomerId)
-   VALUES (@_HallId, @_SessionsId, @_FilmId,@_CustomerId)
-   WHERE NOT EXISTS ( SELECT * FROM InsertTickets 
-                   WHERE HallId = @_HallId,
-                   AND SessionsId = @_SessionsId,
-                   AND FilmId = @_FilmId),
-				   AND CustomerId = @_CustomerId);
-END
----Query1
 
---ALTER PROCEDURE usp_BuyTicket (@HallId = INTEGER, @SessionId = INTEGER, @FilmId = INTEGER, @CustomerId = INTEGER, @StatementType NVARCHAR(20) = ''))
---AS
---BEGIN
---      IF @StatementType = 'Insert'
---        BEGIN 
---		INSERT INTO Tickest (HallId, SessionId, FilmId, CustomerId)
---		 VALUES (@HallId, @SessionId, @FilmId, @CustomerId)
---		 END
-
-CREATE PROCEDURE usp_BuyTicket
+--Query 1
+ALTER PROCEDURE usp_BuyTicket (@HallId int , @SessionId int , @FilmId int, @CustomerId int )
 AS
-IF EXISTS (SELECT * FROM InsertTickets WHERE HallId = '1', SessionsId='1', FilmId= '1',CustomerId='1')
+IF EXISTS (SELECT * FROM InsertTickets WHERE HallId =@HallId AND SessionsId=@SessionId AND FilmId= @FilmId AND CustomersId=@CustomerId)
 BEGIN 
 PRINT 'Yer doludur'
 END
 ELSE 
-INSERT INTO InsertTickets(HallId,SessionsId,FilmId,CustomerId)
-VALUES ('1','1','1','1')
+INSERT INTO InsertTickets(HallId,SessionsId,FilmId,CustomersId)
+VALUES (@HallId, @SessionId, @FilmId, @CustomerId)
 
+EXEC usp_BuyTicket 2,2,2,2
 
+SELECT * FROM InsertTickets
 
 
 
 --Query 2
 
-CREATE FUNCTION dbo.GetEmptySeat (@HallId int, @SessionsId int)
+ALTER FUNCTION dbo.GetEmptySeat (@HallId int, @SessionsId int)
 RETURNS int
 AS
 BEGIN
 DECLARE @SeatCount int
-SELECT @SeatCount = COUNT (Halls.SeatCount) FROM Halls
+SELECT @SeatCount=Halls.SeatCount - COUNT ([Sessions].Id) FROM InsertTickets
 JOIN Halls
-ON Halls.Id = Halls.HallId
+ON InsertTickets.HallId=Halls.Id
+JOIN [Sessions]
+ON InsertTickets.SessionsId=[Sessions].Id
+GROUP BY Halls.SeatCount, [Sessions].Id
+RETURN @SeatCount
+END
+
+
+SELECT dbo.GetEmptySeat (1,1)
+
+
+
+
+
