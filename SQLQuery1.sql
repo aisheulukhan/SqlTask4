@@ -50,6 +50,9 @@ CREATE TABLE Actors(
 )
 
 SELECT * FROM FilmsGenres
+SELECT * FROM Customers
+SELECT * FROM Films
+SELECT * FROM [Sessions]
 
 INSERT INTO Actors(Name,Surname,Age)
 	VALUES ('Anar','Qandayev',21),
