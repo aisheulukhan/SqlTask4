@@ -49,6 +49,8 @@ CREATE TABLE Actors(
 	Age int
 )
 
+SELECT * FROM FilmsGenres
+
 INSERT INTO Actors(Name,Surname,Age)
 	VALUES ('Anar','Qandayev',21),
 	       ('Semseddin','Amanov',20),
@@ -152,7 +154,7 @@ CREATE PROCEDURE usp_BuyTicket
    )
 
 --Query 1
-ALTER PROCEDURE usp_BuyTicket (@HallId int , @SessionId int , @FilmId int, @CustomerId int )
+CREATE PROCEDURE usp_BuyTicket (@HallId int , @SessionId int , @FilmId int, @CustomerId int )
 AS
 IF EXISTS (SELECT * FROM InsertTickets WHERE HallId =@HallId AND SessionsId=@SessionId AND FilmId= @FilmId AND CustomersId=@CustomerId)
 BEGIN 
@@ -162,7 +164,7 @@ ELSE
 INSERT INTO InsertTickets(HallId,SessionsId,FilmId,CustomersId)
 VALUES (@HallId, @SessionId, @FilmId, @CustomerId)
 
-EXEC usp_BuyTicket 2,2,2,2
+EXEC usp_BuyTicket 1,1,1,1
 
 SELECT * FROM InsertTickets
 
@@ -170,7 +172,7 @@ SELECT * FROM InsertTickets
 
 --Query 2
 
-ALTER FUNCTION dbo.GetEmptySeat (@HallId int, @SessionsId int)
+CREATE FUNCTION dbo.GetEmptySeat (@HallId int, @SessionsId int)
 RETURNS int
 AS
 BEGIN
